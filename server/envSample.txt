@@ -1,0 +1,16 @@
+# cloudnary credentials:
+API_KEY=<your-api-key>
+API_SECRET=<secrets>
+CLOUD_NAME=<cloude-name>
+CLOUDINARY_URL=cloudinary://<your-api-key>:<secrets>@<cloude-name>
+
+# db credentials:
+# MONGO_URI="mongodb+srv://<username>:<password>@lms.hoa5vgf.mongodb.net"
+PORT=8080
+
+# stripe credentials:
+STRIPE_SECRET_KEY=<your-secrets>
+STRIPE_PUBLISHABLE_KEY=<publish-key>
+
+# jsonwebtoken credentials:
+SECRET_KEY=<jwt-secrets>
