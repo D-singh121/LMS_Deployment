@@ -1,5 +1,5 @@
 # Stage 1: Build the Vite React application for production
-FROM node:18-alpine AS build
+FROM node:slim-alpine AS build
 
 WORKDIR /app
 
