@@ -89,8 +89,7 @@ This is a **public repository** by [Surendrakumarpatel](https://github.com/Suren
 ---
 
 ## 📸 Screenshot
-
-![E-Learning Preview]](https://github.com/user-attachments/assets/55b4b3ac-022a-400d-b97b-7ffccfc2e9f1)
+![image](https://github.com/user-attachments/assets/32c604b6-36d9-4d77-962f-75e744837c97)
 ---
 
 ## 🙌 Credits
