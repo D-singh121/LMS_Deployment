@@ -16,26 +16,35 @@ connectDB();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+const clientURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 // default middleware
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
-}));
- 
+app.use(
+  cors({
+    origin: clientURL,
+    credentials: true,
+  })
+);
+
+app.get("/", (req, res) => {
+  res.send("Backend is working 🚀");
+});
+
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ message: "Server is healthy" });
+});
+
 // apis
 app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/course", courseRoute);
 app.use("/api/v1/purchase", purchaseRoute);
 app.use("/api/v1/progress", courseProgressRoute);
- 
- 
+
 app.listen(PORT, () => {
-    console.log(`Server listen at port ${PORT}`);
-})
-
-
+  console.log(`Server listen at port ${PORT}`);
+});
