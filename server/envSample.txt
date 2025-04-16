@@ -14,3 +14,6 @@ STRIPE_PUBLISHABLE_KEY=<publish-key>
 
 # jsonwebtoken credentials:
 SECRET_KEY=<jwt-secrets>
+
+# frontend credentials url:
+FRONTEND_URL=http://localhost:3000

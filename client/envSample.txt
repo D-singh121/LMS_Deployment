@@ -1,2 +1,2 @@
 PORT=5173
-BACKEND_URL=
+VITE_API_URL=http://localhost:<your-backend-server-url-port>
