@@ -32,7 +32,7 @@ This project is a fully functional **E-Learning Web Application** showcasing var
 
 ---
 ## Some Configuration for Nginx with Vite
-Add the 'nginx.conf' file in client folder with below content.
+Add the `nginx.conf` file in client folder with below content.
 ```bash
 server {
     listen 80;
@@ -82,7 +82,28 @@ export default defineConfig({
 });
 
 ```
+## Start the backend loacally with passing the envirnoment variable like this mentioned in `envSample` file.
+```bash
+# cloudnary credentials:
+API_KEY=<your-api-key>
+API_SECRET=<secrets>
+CLOUD_NAME=<cloude-name>
+CLOUDINARY_URL=cloudinary://<your-api-key>:<secrets>@<cloude-name>
 
+# db credentials:
+# MONGO_URI="mongodb+srv://<username>:<password>@lms.hoa5vgf.mongodb.net"
+PORT=8080
+
+# stripe credentials:
+STRIPE_SECRET_KEY=<your-secrets>
+STRIPE_PUBLISHABLE_KEY=<publish-key>
+
+# jsonwebtoken credentials:
+SECRET_KEY=<jwt-secrets>
+
+# frontend credentials url:
+FRONTEND_URL=http://localhost:3000
+```
 
 ## 🐳 Dockerized Setup
 
