@@ -65,10 +65,12 @@ After starting the containers, visit:
 ## 📂 Folder Structure (Basic Overview)
 
 ```
-├── client/              # React frontend
-├── server/              # Node.js backend
+├── LMS-Project
+    ├── client/              # React frontend
+          ├── .env                 # Environment variables
+    ├── server/              # Node.js backend
+          ├── .env                 # Environment variables
 ├── docker-compose.yml   # Compose setup
-├── .env                 # Environment variables
 └── README.md
 ```
 
