@@ -14,6 +14,7 @@ This project is a fully functional **E-Learning Web Application** showcasing var
 - TailwindCSS
 - Axios
 - React Router
+- Redux Toolkit
 
 ### 🛠 Backend:
 - Node.js
@@ -24,8 +25,10 @@ This project is a fully functional **E-Learning Web Application** showcasing var
 - Cloudinary (for image upload)
 
 ### 📦 DevOps Tools:
+- Git/Github
 - Docker
 - Docker Compose
+- Nginx server 
 
 ---
 
@@ -58,7 +61,7 @@ docker-compose down
 After starting the containers, visit:
 
 - **Frontend:** [http://localhost:3000](http://localhost:3000)
-- **Backend API (if exposed):** [http://localhost:5000/api](http://localhost:5000/api) *(example)*
+- **Backend API (if exposed):** [http://localhost:8080/api/v1](http://localhost:8080/api/v1) *(example)*
 
 ---
 
@@ -87,8 +90,7 @@ This is a **public repository** by [Surendrakumarpatel](https://github.com/Suren
 
 ## 📸 Screenshot
 
-![E-Learning Preview](./348b7d6c-b4e5-49b0-ba35-a8b4fd56969a.png)
-
+![E-Learning Preview]](https://github.com/user-attachments/assets/55b4b3ac-022a-400d-b97b-7ffccfc2e9f1)
 ---
 
 ## 🙌 Credits
