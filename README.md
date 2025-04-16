@@ -31,6 +31,58 @@ This project is a fully functional **E-Learning Web Application** showcasing var
 - Nginx server 
 
 ---
+## Some Configuration for Nginx with Vite
+Add the 'nginx.conf' file in client folder with below content.
+```bash
+server {
+    listen 80;
+    server_name localhost;
+    
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+    
+    # Handle Vite's asset serving
+    location /assets/ {
+        root /usr/share/nginx/html;
+        try_files $uri =404;
+    }
+    
+    # Error handling
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}
+```
+
+Modify the `vite.config.js` file 
+```bash
+import path from "path";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  server: {
+    host: "0.0.0.0", // 👈 important: allow access from Docker network
+    port: 5173, // 👈 your app port inside container
+    strictPort: true, // optional: fail if port is taken
+    watch: {
+      usePolling: true, // 👈 useful for file changes in Docker
+    },
+  },
+});
+
+```
+
 
 ## 🐳 Dockerized Setup
 
@@ -102,5 +154,5 @@ Thanks to [Surendrakumarpatel](https://github.com/Surendrakumarpatel) for buildi
 
 If you'd like to collaborate or discuss more DevOps projects:
 
-- GitHub: [[YourGitHubUsername](https://github.com/D-singh121)]
-- Email: [YourEmail@example.com]
+- GitHub: [[https://github.com/D-singh121](https://github.com/D-singh121)]
+- Email: [choudharydevesh121@gmail.com]
