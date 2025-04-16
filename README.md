@@ -91,7 +91,7 @@ CLOUD_NAME=<cloude-name>
 CLOUDINARY_URL=cloudinary://<your-api-key>:<secrets>@<cloude-name>
 
 # db credentials:
-# MONGO_URI="mongodb+srv://<username>:<password>@lms.hoa5vgf.mongodb.net"
+MONGO_URI="mongodb+srv://<username>:<password>@lms.hoa5vgf.mongodb.net"
 PORT=8080
 
 # stripe credentials:
