@@ -2,3 +2,16 @@
 */.env*
 **/.gitignore
 **/Dockerfile*
+
+node_modules
+logs
+*.log
+.env
+.env.local
+npm-debug.log
+yarn-error.log
+.DS_Store
+coverage
+.git
+.gitignore
+.dockerignore

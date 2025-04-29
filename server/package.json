@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "echo \"Skipping tests for now\""
+    "test": "echo \"Skipping tests for now\"",
+    "build": "echo \"No build needed for plain Node.js, skipping...\""
   },
   "keywords": [],
   "author": "",

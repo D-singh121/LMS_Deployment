@@ -2,37 +2,54 @@ stages:          # List of stages for jobs, and their order of execution
   - Install_tools
   - test
   - security
-  # - build
-  # - docker
-  # - deploy
+  - build
+  - docker
+  - deploy
   
-Install_docker_trivy_kubectl:
+Install_nodejs_docker_trivy_kubectl:
   stage: Install_tools
   script:
-    - echo "Installing required tools...."
+    - echo "📦 Updating system packages..."
     - sudo apt-get update -y
-    - sudo apt install docker.io -y && sudo chmod 666 /var/run/docker.sock && sudo usermod -aG docker $USER
-    - sudo apt-get install wget apt-transport-https gnupg lsb-release -y
-    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-    - echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-    - sudo apt-get update && sudo apt-get install trivy -y
+
+    - echo "🐳 Installing Docker..."
+    - sudo apt-get install -y docker.io
+    - sudo chmod 666 /var/run/docker.sock
+    - sudo usermod -aG docker $USER
+
+    - echo "🛡️ Installing Trivy for security scanning..."
+    - sudo apt-get install -y wget apt-transport-https gnupg lsb-release curl
+    - curl -fsSL https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor -o trivy.gpg
+    - sudo install -o root -g root -m 644 trivy.gpg /usr/share/keyrings/
+    - echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
+    - sudo apt-get update && sudo apt-get install -y trivy
+
+    # Download latest stable kubectl binary
     - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     - kubectl version --client
+
+
+    - echo "🧰 Installing Node.js and npm (for MERN stack)..."
+    - curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    - sudo apt-get install -y nodejs
+    - node -v
+    - npm -v
+
   tags:
     - self-hosted
 
 unit_tests:
   stage: test
-  image: node:18 
+  image: node:20
   script:
     - echo "Running backend unit tests..."
     - cd server && npm ci && npm run test
     - echo "Running frontend unit tests..."
-    - cd ../client && npm ci && npm run test
+    - cd ../client && npm ci && npm test
   tags:
     - self-hosted
-
+  
 trivy_fs_scan:
   stage: security
   script:
@@ -41,14 +58,13 @@ trivy_fs_scan:
   tags:
     - self-hosted
 
-# Stage 3b: SonarQube Analysis (if configured for JS)
 sonarqube-check:
   stage: security
   image: 
     name: sonarsource/sonar-scanner-cli:latest
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis 
   cache:
     key: "${CI_JOB_NAME}"
     paths:
@@ -59,54 +75,51 @@ sonarqube-check:
   only:
     - main
 
+build_frontend_and_backend_apps:
+  stage: build
+  script:
+    - echo "Building frontend React app will give output on /dist folder..."
+    - cd client && npm ci && npm run build
 
-# # Stage 4: Build Frontend and Backend Apps
-# build_apps:
-#   stage: build
-#   script:
-#     - echo "Building frontend..."
-#     - cd client && npm ci && npm run build
-#     - echo "Backend build (optional for transpilation)..."
-#     - cd ../server && npm ci
-#   tags:
-#     - self-hosted
-#   only:
-#     - main
+    - echo "Preparing backend (Node.js)..."
+    - cd ../server && npm ci && npm run build  # Add build step if needed (e.g., TypeScript transpilation)
+  tags:
+    - self-hosted
+  only:
+    - main
 
-# # Stage 5: Docker Build, Scan & Push
-# docker_build_and_push:
-#   stage: docker
-#   script:
-#     - echo "Logging into Docker Hub..."
-#     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#     - echo "Building Docker images..."
-#     - docker build -t $DOCKER_USERNAME/mern-frontend:latest ./client
-#     - docker build -t $DOCKER_USERNAME/mern-backend:latest ./server
-#     - echo "Running Trivy image scan..."
-#     - trivy image --exit-code 0 --severity HIGH,CRITICAL $DOCKER_USERNAME/mern-frontend:latest
-#     - trivy image --exit-code 0 --severity HIGH,CRITICAL $DOCKER_USERNAME/mern-backend:latest
-#     - docker push $DOCKER_USERNAME/mern-frontend:latest
-#     - docker push $DOCKER_USERNAME/mern-backend:latest
-#   tags:
-#     - self-hosted
-#   only:
-#     - main
+docker_login_build_and_tag_image:
+  stage: docker
+  script:
+    - echo "Logging into DockerHub..."
+    - docker login -u $DOCKER_USERNAME  -p $DOCKER_PASSWORD
 
-# # Stage 6: Deploy to EKS
-# deploy_to_eks:
-#   stage: deploy
-#   variables:
-#     KUBECONFIG_PATH: /home/ubuntu/.kube/config
-#   before_script:
-#     - mkdir -p $(dirname "$KUBECONFIG_PATH")
-#     - echo "$KUBECONFIG_CONTENT" | base64 -d > "$KUBECONFIG_PATH"
-#     - export KUBECONFIG="$KUBECONFIG_PATH"
-#   script:
-#     - echo "Deploying to EKS..."
-#     - kubectl apply -f k8s/frontend-deployment.yaml
-#     - kubectl apply -f k8s/backend-deployment.yaml
-#     - kubectl apply -f k8s/services.yaml
-#   tags:
-#     - self-hosted
-#   only:
-#     - main
+    - echo "Building Docker images..."
+    - docker build -t $DOCKER_USERNAME/lms-frontend:latest ./client
+    - docker build -t $DOCKER_USERNAME/lms-backend:latest ./server
+
+    - echo "Scanning Docker images with Trivy..."  # --exit-code 0 means pipeline fail nahi hogi criticle vulnerabilities milne par bhi.
+    - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table --output trivy-frontend-image-report.txt "$DOCKER_USERNAME/lms-frontend:latest"
+    - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table --output trivy-backend-image-report.txt "$DOCKER_USERNAME/lms-backend:latest"
+
+
+    - echo "Pushing docker image to docker hub..."
+    - docker push $DOCKER_USERNAME/lms-frontend:latest
+    - docker push $DOCKER_USERNAME/lms-backend:latest   
+
+  artifacts: # image scanning ki compleate report ispe milegi
+    paths:
+      - trivy-backend-image-report.txt
+      - trivy-frontend-image-report.txt
+    when: always
+    expire_in: 1 week
+  tags:
+    - self-hosted
+  only:
+    - main
+    
+deplo_to_kubernetes_cluster:
+  stage: deploy
+  script:
+  - echo "deploying to kubernetes cluster..."
+
