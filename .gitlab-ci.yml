@@ -1,0 +1,26 @@
+stages:
+  - checkout
+  - build
+  - test
+  - deploy
+
+checkout:
+  stage: checkout
+  script:
+    - echo "checkout"
+    
+build:
+  stage: build
+  script:
+    - echo "build"
+    
+test:
+  stage: test
+  script:
+    - echo "test"
+    
+deploy:
+  stage: deploy
+  script:
+    - echo "deploy"
+    
