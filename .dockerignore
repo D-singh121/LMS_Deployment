@@ -1,0 +1,6 @@
+node_module
+dist
+k8s/backend-secrets.y*ml
+*backend-secrets.y*ml
+*config.y*ml
+k8s/frontend-config.yml
