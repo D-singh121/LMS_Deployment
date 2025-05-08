@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend 
+  name: backend
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: backend 
+      app: backend
   template:
     metadata:
       labels:
-        app: backend 
+        app: backend
     spec:
       containers:
-        - name: lms-backend 
+        - name: lms-backend
           image: devesh121/lms-backend:latest
           ports:
             - containerPort: 8080
           envFrom:
             - secretRef:
-                name: backend-Secrets
+                name: backend-secrets
+            - configMapRef:
+                name: backend-config
           resources:
             requests:
-              cpu: "200m"   # 200 millicpu = 0.2 cpu
+              cpu: "200m" # 200 millicpu = 0.2 cpu
               memory: "256Mi"
             limits:
               cpu: "500m"
               memory: "500Mi"
-
-    

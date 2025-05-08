@@ -6,9 +6,11 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "3000:80" # hostPort: containerPort
     env_file:
       - ./client/.env
+    networks:
+      - my_network
     depends_on:
       - backend
 
@@ -17,8 +19,22 @@ services:
       context: ./server
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8080" # hostPort: containerPort
     env_file:
       - ./server/.env
+    networks:
+      - my_network
+    volumes:
+      - ./server/data:/usr/src/app/data
 
+networks:
+  my_network:
+    name: my_network
+    driver: bridge
 
+volumes:
+  data:
+    name: data
+    driver: local
+# hostPort: containerPort --> host matlab mera system and containerPort matlab dockerContainer ka port.
+# port mapping karni padti hai because container ko host pe connect karna hai tabhi hum application ko access kar sakte hain apne browser pe ya host se curl command use karke.

@@ -79,7 +79,10 @@ build_frontend_and_backend_apps:
   stage: build
   script:
     - echo "Building frontend React app will give output on /dist folder..."
-    - cd client && npm ci && npm run build
+    - cd client && npm ci
+    - echo "Injecting backend API URL into frontend build"
+    - export VITE_API_URL=http://backend-service:8080
+    - npm run build
 
     - echo "Preparing backend (Node.js)..."
     - cd ../server && npm ci && npm run build  # Add build step if needed (e.g., TypeScript transpilation)
@@ -118,8 +121,48 @@ docker_login_build_and_tag_image:
   only:
     - main
     
-deplo_to_kubernetes_cluster:
+deploy_to_kind_kubernetes_cluster:
   stage: deploy
   script:
-  - echo "deploying to kubernetes cluster..."
+    - echo "Deploying to k8s cluster"
+    - echo "$KUBECONFIG_CONTENT" | base64 -d > ~/.kube/config
+
+    - echo "🔐 Creating backend secrets..." 
+    - |
+      kubectl create secret generic backend-secrets \
+        --from-literal=API_KEY="$API_KEY" \
+        --from-literal=API_SECRET="$API_SECRET" \
+        --from-literal=CLOUD_NAME="$CLOUD_NAME" \
+        --from-literal=CLOUDINARY_URL="$CLOUDINARY_URL" \
+        --from-literal=STRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" \
+        --from-literal=STRIPE_PUBLISHABLE_KEY="$STRIPE_PUBLISHABLE_KEY" \
+        --from-literal=SECRET_KEY="$SECRET_KEY" \
+        --from-literal=MONGO_URI=${MONGO_URI} \
+        --from-literal=PORT="$PORT" \
+        --from-literal=FRONTEND_URL="$FRONTEND_URL" \
+        --dry-run=client -o yaml | kubectl apply -f -
+
+    - echo "🛠️ Creating frontend config..."
+    - |
+      kubectl create configmap frontend-config \
+        --from-literal=VITE_API_URL="$VITE_API_URL" \
+        --dry-run=client -o yaml | kubectl apply -f -
+
+    # 🚀 Step 3: Apply deployment + service manifests
+    - echo "📦 Applying Kubernetes manifests..."
+    - |
+      if ls k8s/*.y*ml 1> /dev/null 2>&1; then
+        kubectl apply -f k8s/backend-deployment.yml;
+        kubectl apply -f k8s/backend-service.yml;
+        kubectl apply -f k8s/frontend-deployment.yml;
+        kubectl apply -f k8s/frontend-service.yml;
+      else
+        echo "⚠️ No YAML files found in k8s/ directory.";
+      fi
+
+  tags:
+    - kind-local-runner
+  only:
+    - main
+
 

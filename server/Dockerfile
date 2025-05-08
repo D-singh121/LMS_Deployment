@@ -1,5 +1,5 @@
 # Stage 1: Build the backend
-FROM node:alpine AS builder
+FROM node:18 AS builder
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Copy the rest of the application code
 COPY . .

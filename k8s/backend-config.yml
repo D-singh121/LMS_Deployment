@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  # FRONTEND_URL: "http://frontend-service:3000"  # for ingres or load balancer
+
+  # FRONTEND_URL=http://<node_IP>:<nodePort_port>    # for local nodeport port
+  FRONTEND_URL: "http://172.18.0.3:30001"
+  PORT: "8080"
