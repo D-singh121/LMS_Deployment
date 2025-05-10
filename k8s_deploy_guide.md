@@ -1,5 +1,5 @@
 # Kubernetes Deployment for LMS Project with KIND
-
+For installing the kind and creating cluster refer the **kind_readme.md** file within the same directory. 
 Once your KIND cluster is up and running, you should be able to verify the nodes like this:
 
 ```bash
