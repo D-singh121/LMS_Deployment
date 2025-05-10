@@ -16,7 +16,7 @@ ENV VITE_API_URL=$VITE_API_URL
 ARG PORT
 ENV PORT=$PORT
 
-RUN npm run build
+RUN VITE_API_URL=$VITE_API_URL npm run build
 
 # Stage 2: Set up Nginx to serve the built app
 FROM nginx:alpine

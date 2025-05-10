@@ -1,11 +1,11 @@
-stages:          # List of stages for jobs, and their order of execution
+stages: # List of stages for jobs, and their order of execution
   - Install_tools
   - test
   - security
   - build
   - docker
   - deploy
-  
+
 Install_nodejs_docker_trivy_kubectl:
   stage: Install_tools
   script:
@@ -29,7 +29,6 @@ Install_nodejs_docker_trivy_kubectl:
     - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     - kubectl version --client
 
-
     - echo "🧰 Installing Node.js and npm (for MERN stack)..."
     - curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
     - sudo apt-get install -y nodejs
@@ -49,7 +48,7 @@ unit_tests:
     - cd ../client && npm ci && npm test
   tags:
     - self-hosted
-  
+
 trivy_fs_scan:
   stage: security
   script:
@@ -60,16 +59,16 @@ trivy_fs_scan:
 
 sonarqube-check:
   stage: security
-  image: 
+  image:
     name: sonarsource/sonar-scanner-cli:latest
   variables:
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis 
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
+    GIT_DEPTH: "0" # Tells git to fetch all the branches of the project, required by the analysis
   cache:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-  script: 
+  script:
     - sonar-scanner
   allow_failure: true
   only:
@@ -81,11 +80,11 @@ build_frontend_and_backend_apps:
     - echo "Building frontend React app will give output on /dist folder..."
     - cd client && npm ci
     - echo "Injecting backend API URL into frontend build"
-    - export VITE_API_URL=http://backend-service:8080
+    - export VITE_API_URL=$VITE_API_URL
     - npm run build
 
     - echo "Preparing backend (Node.js)..."
-    - cd ../server && npm ci && npm run build  # Add build step if needed (e.g., TypeScript transpilation)
+    - cd ../server && npm ci && npm run build # Add build step if needed (e.g., TypeScript transpilation)
   tags:
     - self-hosted
   only:
@@ -97,18 +96,19 @@ docker_login_build_and_tag_image:
     - echo "Logging into DockerHub..."
     - docker login -u $DOCKER_USERNAME  -p $DOCKER_PASSWORD
 
+    - export VITE_API_URL=$VITE_API_URL
     - echo "Building Docker images..."
-    - docker build -t $DOCKER_USERNAME/lms-frontend:latest ./client
+    # - echo $VITE_API_URL
+    - docker build  --build-arg VITE_API_URL -t $DOCKER_USERNAME/lms-frontend:latest ./client
     - docker build -t $DOCKER_USERNAME/lms-backend:latest ./server
 
-    - echo "Scanning Docker images with Trivy..."  # --exit-code 0 means pipeline fail nahi hogi criticle vulnerabilities milne par bhi.
+    - echo "Scanning Docker images with Trivy..." # --exit-code 0 means pipeline fail nahi hogi criticle vulnerabilities milne par bhi.
     - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table --output trivy-frontend-image-report.txt "$DOCKER_USERNAME/lms-frontend:latest"
     - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table --output trivy-backend-image-report.txt "$DOCKER_USERNAME/lms-backend:latest"
 
-
     - echo "Pushing docker image to docker hub..."
     - docker push $DOCKER_USERNAME/lms-frontend:latest
-    - docker push $DOCKER_USERNAME/lms-backend:latest   
+    - docker push $DOCKER_USERNAME/lms-backend:latest
 
   artifacts: # image scanning ki compleate report ispe milegi
     paths:
@@ -120,14 +120,14 @@ docker_login_build_and_tag_image:
     - self-hosted
   only:
     - main
-    
+
 deploy_to_kind_kubernetes_cluster:
   stage: deploy
   script:
     - echo "Deploying to k8s cluster"
     - echo "$KUBECONFIG_CONTENT" | base64 -d > ~/.kube/config
 
-    - echo "🔐 Creating backend secrets..." 
+    - echo "🔐 Creating backend secrets..."
     - |
       kubectl create secret generic backend-secrets \
         --from-literal=API_KEY="$API_KEY" \
@@ -140,22 +140,32 @@ deploy_to_kind_kubernetes_cluster:
         --from-literal=MONGO_URI=${MONGO_URI} \
         --from-literal=PORT="$PORT" \
         --from-literal=FRONTEND_URL="$FRONTEND_URL" \
-        --dry-run=client -o yaml | kubectl apply -f -
+        --dry-run=client -o yaml | kubectl apply -n lms -f -
 
     - echo "🛠️ Creating frontend config..."
     - |
       kubectl create configmap frontend-config \
         --from-literal=VITE_API_URL="$VITE_API_URL" \
-        --dry-run=client -o yaml | kubectl apply -f -
+        --dry-run=client -o yaml | kubectl apply -n lms -f -
+    
+    - echo "🛠️ Creating backend config..."
+    - |
+      kubectl create configmap backend-config \
+        --from-literal=FRONTEND_URL="$FRONTEND_URL" \
+        --from-literal=PORT="$PORT" \
+        --dry-run=client -o yaml | kubectl apply -n lms -f -
 
     # 🚀 Step 3: Apply deployment + service manifests
     - echo "📦 Applying Kubernetes manifests..."
     - |
       if ls k8s/*.y*ml 1> /dev/null 2>&1; then
-        kubectl apply -f k8s/backend-deployment.yml;
-        kubectl apply -f k8s/backend-service.yml;
-        kubectl apply -f k8s/frontend-deployment.yml;
-        kubectl apply -f k8s/frontend-service.yml;
+        if ! kubectl get namespace lms > /dev/null 2>&1; then
+          kubectl create namespace lms;
+        fi
+        kubectl apply -f k8s/backend-deployment.yml -n lms;
+        kubectl apply -f k8s/backend-service.yml -n lms;
+        kubectl apply -f k8s/frontend-deployment.yml -n lms;
+        kubectl apply -f k8s/frontend-service.yml -n lms;
       else
         echo "⚠️ No YAML files found in k8s/ directory.";
       fi
@@ -164,5 +174,3 @@ deploy_to_kind_kubernetes_cluster:
     - kind-local-runner
   only:
     - main
-
-

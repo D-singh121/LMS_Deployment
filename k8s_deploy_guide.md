@@ -54,8 +54,8 @@ CMD ["nginx", "-g", "daemon off;"]
 ### Example Build Command and push to docker hub so it reflec on k8s menifests also with latest image
 
 ```bash
-docker build -t lms-frontend:latest --build-arg VITE_API_URL=http://172.18.0.3:30080 .
-docker push lms-frontend:latest
+docker build -t devesh121/lms-frontend:latest --build-arg VITE_API_URL=http://172.18.0.3:30080 .
+docker push devesh121/lms-frontend:latest
 ```
 
 ---

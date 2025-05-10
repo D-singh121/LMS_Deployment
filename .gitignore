@@ -5,3 +5,5 @@ k8s/backend-secrets.y*ml
 *backend-secrets.y*ml
 *Secrets.y*ml
 *secrets.y*ml
+*kubeconfig.y*ml
+*kubeconfig**
