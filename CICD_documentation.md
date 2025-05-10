@@ -172,3 +172,7 @@ Steps:
 ```
 
 ---
+## Here Warning is for sonarqube because sonarqube is running on aws ec2 instance inside docker container and after refreshing the instance public_IP the sonar-serverIP get also change and sonarqube server need configuration with CICD pipeline with that IP. but this is not major problem we have to just setup the sonar server with new instance public ip or we can use a Elastic IP but it comes with cost.
+![pipeline](image.png)
+
+---
