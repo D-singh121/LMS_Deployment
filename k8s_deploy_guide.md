@@ -74,7 +74,7 @@ data:
   PORT: "8080"
 ```
 
-## Backend Secret Note: Never Push these secrets on source code management like github, gitlab Insted use with secrets variable on cicd line.
+## Backend Secret Note: Never Push these secrets on source code management like github, gitlab Insted use with secrets variable on cicd line. These are dummy only
 
 ```yaml
 apiVersion: v1
@@ -84,14 +84,14 @@ metadata:
   namespace: lms
 type: Opaque
 data:
-  API_KEY: MzExMTgyNjQ3MjE4NDc5
-  API_SECRET: NHV5SDBpS1VHaEpndzd6OVVYRmpQck1QX2ZN
-  CLOUD_NAME: ZHJnd3A0NWFr
-  CLOUDINARY_URL: Y2xvdWRpbmFyeTovLzMxMTE4MjY0NzIxODQ3OTo0dXlIMGlLVUdoSmd3N3o5VVhGalByTVBfZk1AZHJnd3A0NWFr
-  MONGO_URI: bW9uZ29kYitzcnY6Ly9kZXZlc2g6RGVlMTU0NTk1JTQwQGxtcy5ob2E1dmdmLm1vbmdvZGIubmV0L2xtcz9yZXRyeVdyaXRlcz10cnVlJnc9bWFqb3JpdHkK
-  STRIPE_SECRET_KEY: c2tfdGVzdF81MVJFNGMwUHhmWXpoeWI0a3QyU1dTQ0I0ekRMRjhuWnZZbXlpbzFxZHJOd1VCWGx5NXhwR3hYdWdiMUJpU3F1S3A2enFrYTJrVm01NjBiQ1V3U050bXRIWjAwVnF1cllLd0U=
-  STRIPE_PUBLISHABLE_KEY: cGtfdGVzdF81MVJFNGMwUHhmWXpoeWI0azROck0xcGpoQkN6ekNhY245Q1hjd1dVSGFvcml4QUl2STNCclBHQmg2MjZhaTZxbVdEamxKNHpRQW80YUwzcThUeENvemoydTAwdnhyd0tjbmI=
-  SECRET_KEY: NHV5SDBpS1VHaEpndzd6OVVYRmpQck1QX2ZN
+  API_KEY: MzExMTgyNjQ3Mjkglmbkfd
+  API_SECRET: NHV5SDBpS1VHaEpndzdghfkghfdg6OVVYRmpQck1QX2ZN
+  CLOUD_NAME: ZHJnd3A0NWFrdgfg
+  CLOUDINARY_URL: Y2xvdWRpbmFyeTovLzMxMTE4MjY0klvvgd2dsNzIxODQ3OTo0dXlIMGlLVUdoSmd3N3o5VVhGalByTVBfZk1AZHJnd3A0NWFr
+  MONGO_URI: bW9uZ29kYitzcnY6Ly9kZXZlc2g6RGVlMTU0Njjyigfdgfd67Tk1JTQwQGxtcy5ob2E1dmdmLm1vbmdvZGIubmV0L2xtcz9yZXRyeVdyaXRlcz10cnVlJnc9bWFqb3JpdHkK
+  STRIPE_SECRET_KEY: c2tfdGVzdF81MVJFNGMwUHhmWXpoeWI0a3QyU1dTQ0I0ekRM6546dsRjhuWnZZbXlpbzFxZHJOd1VCWGx5NXhwR3hYdWdsgfgiMUJpU3F1S3A2enFrYTJrVm01NjBiQ1V3U050bXRIWjAwVnF1cllLd0U=
+  STRIPE_PUBLISHABLE_KEY: cGtfdGVzdF81MVJFNGMwUHhmWXpoeWI0azROck0xcGpoQkN6ekNhY245Q1hjd113665serbdVSGFvcml4QUl2STNCclBHQmg2MjZhaTZxbVdEamxKNHpRQW80YUwzcThUeENvemoy876uudTAwdnhyd0tjbmI=
+  SECRET_KEY: NHV5SDBpS1VHaEpndzd6OVVYRmpQck1dfjkjgs1QX2ZN
 ```
 
 ## Backend Deployment
