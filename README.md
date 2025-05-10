@@ -7,28 +7,10 @@ This project is a fully functional **E-Learning Web Application** showcasing var
 
 ---
 
-## 🚀 Tech Stack Used
-
-### 🔧 Frontend:
-- React.js
-- TailwindCSS
-- Axios
-- React Router
-- Redux Toolkit
-
-### 🛠 Backend:
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT Authentication
-- Cloudinary (for image upload)
-
-### 📦 DevOps Tools:
-- Git/Github
-- Docker
-- Docker Compose
-- Nginx server 
+# 🚀 Tech Stack Used
+- **Frontend:** React.js • TailwindCSS • Axios • React Router • Redux Toolkit
+- **Backend**: Node.js • Express.js • MongoDB • Mongoose • JWT • Cloudinary
+- **DevOps Tools**: Git/GitHub • Docker • Docker Compose • Nginx
 
 ---
 ## Some Configuration for Nginx with Vite
