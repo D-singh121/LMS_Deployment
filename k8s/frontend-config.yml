@@ -4,4 +4,4 @@ metadata:
   name: frontend-config
 data:
   # VITE_API_URL: "http://backend-service:8080"  # ye loadbalancer pe support karta hai ya fir ingres pe 
-   VITE_API_URL: "http://172.18.0.3:30080"
+   VITE_API_URL: "http://172.18.0.4:30080"
